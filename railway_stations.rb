@@ -86,4 +86,10 @@ class Train
     end
     @train_in_station.add_train(self)
   end
+
+  def current_station
+    next_station = @way.route[@way.route.index(train_in_station) + 1]
+    last_station = @way.route[@way.route.index(train_in_station) - 1]
+    puts "Прошлая станция: #{last_station.name}, текущая станция: #{train_in_station.name}, следуюшая станция: #{next_station.name}"
+  end
 end
