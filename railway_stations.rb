@@ -1,30 +1,30 @@
 class Station
-  attr_reader :name, :train_in_station
+  attr_reader :name, :train
 
   def initialize(name)
     @name = name
-    @train_in_station = []
+    @train = []
   end
 
   def add_train(train)
-    @train_in_station << train
+    @train << train
   end
 
-  def current_station
-    @train_in_station.each { |train| puts train }
+  def list_of_trains
+    @train.each { |train| puts train }
   end
 
-  def current_station_by_type
-    @train_in_station.each { |train| puts train.type }
+  def list_of_trains_by_type
+    @train.each { |train| puts train.type }
   end
 
   def delete_train(train)
-    @train_in_station.delete(train)
+    @train.delete(train)
   end
 end
 
 class Route
-  attr_reader :route, :starting_station
+  attr_reader :route, :starting_station, :terminal_station
 
   def initialize(starting_station,terminal_station)
     @starting_station = starting_station
@@ -39,11 +39,6 @@ class Route
   def delete_station(station)
     @route.delete(station)
   end
-
-  def show_route
-    puts @route.each { |station| puts station.name}
-  end
-
 end
 
 class Train
@@ -51,7 +46,7 @@ class Train
 
   attr_reader :number_of_cars, :type
 
-  def initialize(number, type = 'freight' || 'passenger', number_of_cars)
+  def initialize(number, type, number_of_cars)
     @number = number
     @type = type
     @number_of_cars = number_of_cars
@@ -71,24 +66,26 @@ class Train
     @number_of_cars -= 1 if @speed == 0
   end
 
-  def ltierary(way)
+  def add_train_to_route(way)
     @way = way
     @train_in_station = way.starting_station
     @train_in_station.add_train(self)
   end
 
-  def route_on_station(type = 'forward' || 'back')
+  def move_forward
     @train_in_station.delete_train(self)
-    if type == 'forward'
-      @train_in_station = @way.route[@way.route.index(train_in_station) + 1]
-    elsif type == 'back'
-      @train_in_station = @way.route[@way.route.index(train_in_station) - 1]
-    end
+    @train_in_station = @way.route[@way.route.index(train_in_station) + 1] if @train_in_station != @way.terminal_station
+    @train_in_station.add_train(self)   
+  end
+
+  def move_back
+    @train_in_station.delete_train(self)
+    @train_in_station = @way.route[@way.route.index(train_in_station) - 1] if @train_in_station != @way.starting_station
     @train_in_station.add_train(self)
   end
 
   def current_station
-    next_station = @way.route[@way.route.index(train_in_station) + 1]
+    next_station = @way.route[@way.route.index(train_in_station) + 1] 
     last_station = @way.route[@way.route.index(train_in_station) - 1]
     puts "Прошлая станция: #{last_station.name}, текущая станция: #{train_in_station.name}, следуюшая станция: #{next_station.name}"
   end
