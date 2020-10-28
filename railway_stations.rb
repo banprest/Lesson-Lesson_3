@@ -47,7 +47,6 @@ class Train
     @type = type
     @number_of_cars = number_of_cars
     @speed = 0
-    @current_station  
   end
 
   def stop
@@ -70,22 +69,29 @@ class Train
 
   def move_forward
     @current_station.delete_train(self)
-    @current_station = @way.route[@way.route.index(current_station) + 1] if @train_in_station != @way.terminal_station
+    @current_station = next_station 
     @current_station.add_train(self)   
   end
 
   def move_back
     @current_station.delete_train(self)
-    @current_station = @way.route[@way.route.index(current_station) - 1] if @train_in_station != @way.starting_station
+    @current_station = previous_station 
     @current_station.add_train(self)
   end
 
   def next_station
-    @next_station = @way.route[@way.route.index(current_station) + 1]
-
+    if @current_station == @way.terminal_station
+      return nil
+    else
+      @way.route[@way.route.index(current_station) + 1]
+    end
   end
 
-  def last_station
-    @last_station = @way.route[@way.route.index(current_station) - 1]
+  def previous_station
+    if @current_station == @way.starting_station
+      return nil
+    else
+      @way.route[@way.route.index(current_station) - 1]
+    end
   end
 end
